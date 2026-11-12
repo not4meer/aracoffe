@@ -103,6 +103,20 @@ test("menü: kategori ve ürün ekle, fiyat kuralları, tükendi, gizle, sil —
   expect(data).toEqual([]);
 });
 
+test("panelde ürün arama: Türkçe karakterden bağımsız, eşleşmeyenleri gizler, silince eski hale döner", async ({ page }) => {
+  await login(page);
+  const box = page.getByRole("searchbox", { name: "Ürün ara" });
+  await box.fill("cay");
+  await expect(page.getByRole("status").filter({ hasText: /ürün bulundu/ })).toBeVisible();
+  await expect(page.locator("li[data-ara]:visible").filter({ hasText: "Ada Çayı" })).toHaveCount(1);
+  await expect(page.locator("li[data-ara]:visible").filter({ hasText: "Espresso" })).toHaveCount(0);
+  await box.fill("zzzz");
+  await expect(page.getByRole("status").filter({ hasText: "Eşleşen ürün yok" })).toBeVisible();
+  await box.fill("");
+  await expect(page.locator("details[data-kategori]:visible").first()).toBeVisible();
+  expect(await page.locator("details[data-kategori]:visible").count()).toBeGreaterThan(3);
+});
+
 test("bilgiler: telefon ve Instagram farklı yazımlarla kabul edilir, sitede görünür", async ({ page }) => {
   const { data: before } = await db().from("site_settings").select("phone,instagram,address,map_url").eq("id", 1).single();
   try {

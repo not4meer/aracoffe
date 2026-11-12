@@ -1,6 +1,6 @@
 import { adminDb } from "@/lib/admin/db";
 import { requireAdmin } from "@/lib/admin/auth";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, normalizeTr } from "@/lib/format";
 import { mediaUrl } from "@/lib/data";
 import {
   createCategory,
@@ -18,6 +18,7 @@ import {
   updateProduct,
 } from "@/app/yonetim/actions";
 import { ActionForm, ImagePicker } from "@/components/admin/ui";
+import { PanelSearch } from "@/components/admin/PanelSearch";
 import { btn, btnDanger, btnGhost, card, input, label } from "@/components/admin/styles";
 
 type Cat = { id: string; name: string; note: string; is_visible: boolean; updated_at: string };
@@ -75,6 +76,7 @@ export default async function MenuPage() {
 
   return (
     <div className="space-y-5">
+      <PanelSearch />
       <details className={card}>
         <summary className="cursor-pointer text-base font-extrabold">+ Yeni kategori ekle</summary>
         <ActionForm action={createCategory} className="mt-4 space-y-3">
@@ -162,7 +164,7 @@ export default async function MenuPage() {
 
               <ul className="divide-y divide-stone-200">
                 {list.map((p) => (
-                  <li key={p.id} className="flex items-start gap-2 py-2">
+                  <li key={p.id} data-ara={normalizeTr(`${p.name} ${p.description}`)} className="flex items-start gap-2 py-2">
                     <details className="min-w-0 flex-1">
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-1.5">
                         <span className="min-w-0">

@@ -68,3 +68,26 @@ test("paylaşım görseli üretilir", async ({ request }) => {
   expect(res.status()).toBe(200);
   expect(res.headers()["content-type"]).toContain("image/png");
 });
+
+test("ana ekrana ekleme: manifest ve ikonlar", async ({ request }) => {
+  const res = await request.get("/manifest.webmanifest");
+  expect(res.status()).toBe(200);
+  const m = await res.json();
+  expect(m.display).toBe("standalone");
+  expect(m.name).toBe("Ara Coffee Bakery");
+  expect(m.theme_color).toMatch(/^#[0-9A-Fa-f]{6}$/);
+  expect(m.icons.length).toBeGreaterThanOrEqual(2);
+  for (const icon of m.icons) {
+    const r = await request.get(icon.src);
+    expect(r.status()).toBe(200);
+    expect(r.headers()["content-type"]).toBe("image/png");
+  }
+  const apple = await request.get("/ikon/180");
+  expect(apple.status()).toBe(200);
+  expect((await request.get("/ikon/999")).status()).toBe(404);
+});
+
+test("sayfada Apple ana ekran ikonu bağlantısı var", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", /\/ikon\/180/);
+});

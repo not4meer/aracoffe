@@ -22,7 +22,11 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "tr_TR",
       type: "website",
     },
-    icons: logo ? { icon: logo } : { icon: "/icon.svg" },
+    icons: {
+      icon: logo ?? "/icon.svg",
+      apple: `/ikon/180?v=${encodeURIComponent(site.updated_at)}`,
+    },
+    appleWebApp: { capable: true, title: site.business_name, statusBarStyle: "default" },
   };
 }
 
