@@ -8,20 +8,27 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test:unit": "vitest run",
-    "test:e2e": "playwright test",
-    "test": "npm run test:unit && npm run build && npm run test:e2e"
+    "test:unit": "npm run test:guard && vitest run",
+    "test:e2e": "npm run test:guard && node scripts/with-test-env.mjs node node_modules/@playwright/test/cli.js test",
+    "test": "npm run test:unit && npm run test:build && npm run test:e2e",
+    "test:guard": "node scripts/test-guard.mjs",
+    "test:build": "npm run test:guard && node -e \"require('fs').rmSync('.next/cache/fetch-cache',{recursive:true,force:true})\" && node scripts/with-test-env.mjs node node_modules/next/dist/bin/next build",
+    "admin:user": "node scripts/admin-user.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",
     "next": "16.4.6",
+    "qrcode": "^1.5.4",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@tailwindcss/turbopack": "4.3.3",
     "@types/node": "^22.20.5",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

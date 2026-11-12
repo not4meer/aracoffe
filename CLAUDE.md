@@ -26,10 +26,30 @@ Her yeni oturumda önce bu dosyayı, sonra `docs/BRIEF.md` dosyasını oku. Brie
 - Testler: `npm run test` (unit → build → e2e). Bu sandbox'ta sadece Chromium var; `iphone` (WebKit) projesi kullanıcının makinesinde çalıştırılmalı: `npx playwright test --project=android` burada geçiyor.
 - Bu Next.js sürümünde error.tsx prop'u `retry` (reset değil). Kod yazmadan önce `node_modules/next/dist/docs/` oku.
 
+## Müşteri: Ara Coffee Bakery (21.11 oturumu)
+- Menü kaynağı: kullanıcının `menüiçeriği.xlsx` dosyası (65 ürün, 5 dolu kategori + boş Tatlılar/Sandviçler/Kruvasanlar/Waffle). Canlı DB'de zaten yüklü; yazım düzeltmeleri yapılmış (Cappucino→Cappuccino, Toffie→Toffee, D.Espresso→Double Espresso vb.).
+- Logo: kullanıcının gönderdiği orijinal görsel (`~/Downloads/WhatsApp Image 2026-11-12 at 20.57.21.jpeg`), daire dışı şeffaf PNG olarak canlı + test depoya yüklendi (`scripts/upload-logo.mjs`). SVG çizim (`src/lib/logo-svg.ts`) sadece logo yoksa yedek. Menü kategori süsü = logodaki iki kahve çekirdeği.
+- Menü kartları: tamamını kaplayan soluk duvar kâğıdı deseni (`.menu-wallpaper`). Köşe çizimleri kullanıcı beğenmedi, kaldırıldı.
+- Tasarım: krem + koyu kahve, Fraunces + Manrope. Renkler DB'den (`site_settings`).
+- Ayrı test projesi: `jmvdwbpdloozkzxyzusm` (`.env.test.local`, `SUPABASE_TARGET=test`). Testler `scripts/test-guard.mjs` ile canlıda çalışmayı reddeder. `npm run test` hepsini test DB'sine karşı çalıştırır.
+- Panel: `/yonetim` (giriş, menü, bilgiler, saatler, fotoğraflar, renkler, QR, hesap). Yazma işlemleri `SUPABASE_SECRET_KEY` ister (`.env.local` ve `.env.test.local`).
+
+## SAHTE / VARSAYIM VERİLER (kullanıcıya bildirildi, gerçekleriyle değişecek)
+- Telefon: `05000000000` (sahte).
+- Çalışma saatleri: her gün 08:00–23:00 (varsayım).
+- Adres: "Concept Çarşı 12" (Instagram biyografisinden; şehir/ilçe bulunamadı, harita linki boş → adresten otomatik Google Maps araması).
+- Tanıtım yazısı boş, sloganı Instagram'dan: "Lezzete kısa bir Ara".
+- Renkler logodan türetilen tahmini değerler.
+
+## Testler (21.11)
+- `npm run test` = unit (17) + test DB'ye karşı build + Playwright. Bu Mac'te Chromium kurulu: `node scripts/with-test-env.mjs node node_modules/@playwright/test/cli.js test --project=android` → 22/22 geçti. WebKit (iphone) kurulu değil.
+- Test build öncesi `.next/cache/fetch-cache` silinir (yoksa eski Supabase cevabıyla derler).
+- Panel kullanıcıları: test DB `admin` (şifre `.env.test.local`), canlı DB `admin` (şifre kullanıcıdan, `.env.local`; teslimde değişmeli).
+
 ## Sıradaki adım
-- Supabase MCP doğru hesaba bağlanınca: veritabanı şeması + RLS (+ ayrı test projesi).
-- Brief Bölüm 4'teki müşteri bilgileri kullanıcıdan gelecek.
-- Netlify: netlify.toml ve hesap bağlantısı henüz yapılmadı (güncel Netlify dokümanına bakarak yapılacak).
+- Kullanıcıdan iki gizli anahtar (`sb_secret_...`: canlı + test) → `.env.local` / `.env.test.local` içine `SUPABASE_SECRET_KEY`. Sonra `npm run admin:user -- admin` ile panel kullanıcısı, panel e2e testleri (giriş, menü, fotoğraf, renk, saat, QR, kilit).
+- Playwright Chromium kurulumu (`npx playwright install chromium`) kullanıcı onayı bekliyor; sonra `npm run test`.
+- Audit raporu (brief Bölüm 9), Netlify (netlify.toml, canlı tutma görevi), en sonda domain + QR.
 
 ## Ortam notları
 - Bulut sandbox'ı sadece HTTPS çıkışa izin veriyor; Postgres (5432/6543) bağlantısı reddediliyor. Şema işleri için Supabase MCP (doğru hesap) ya da Supabase erişim token'ı (`sbp_...`, Management API) gerekir.

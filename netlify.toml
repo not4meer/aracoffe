@@ -1,0 +1,8 @@
+# Netlify ayarları. Next.js'i Netlify kendisi algılar (OpenNext adaptörü).
+# Gizli anahtarlar burada DEĞİL; Netlify panelinde ortam değişkeni olarak tutulur.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"

@@ -1,5 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
+if (process.env.SUPABASE_TARGET !== "test") {
+  throw new Error("Testler sadece test veritabanında çalışır: npm run test:e2e kullan.");
+}
+
 const PORT = Number(process.env.E2E_PORT ?? 3100);
 
 // Testler production build'e karşı çalışır (npm run build && next start).
