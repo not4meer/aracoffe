@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+.vercel/
+.netlify/
+/coverage
+/out/
+/build
+.DS_Store
+*.pem
+*.tsbuildinfo
+npm-debug.log*
+/test-results/
+/playwright-report/
